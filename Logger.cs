@@ -72,15 +72,10 @@ public class Logger
                         continue;
                     }
 
+                    GC.KeepAlive(_loggerObjects.LogsToPost);
+
                     foreach (var b in _loggerObjects.LogsToPost.ToList())
                     {
-                        if (b is null || b.Message is "" || b.TimeOfEvent != new DateTime())
-                        {
-                            LogWarn(null, $"Missed log message due to missing data");
-                            _loggerObjects.LogsToPost.Remove(b);
-                            continue;
-                        }
-
                         string LogLevelText = b.LogLevel.ToString();
                         ConsoleColor LogLevelColor = ConsoleColor.Gray;
 
@@ -124,9 +119,10 @@ public class Logger
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.FATAL && maxLogLevel >= LoggerObjects.LogLevel.FATAL)
                         {
-                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Namespace : "??")}/{(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
-                            Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
-                            Console.ResetColor(); Console.WriteLine(b.Message);
+                            Console.ResetColor();
+                            Console.ForegroundColor = ConsoleColor.Black; Console.BackgroundColor = LogLevelColor; Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Namespace : "??")}/{(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
+                            Console.Write($"[{LogLevelText}]");
+                            Console.ResetColor(); Console.WriteLine($" {b.Message}");
                             _loggerObjects.LogsToPost.Remove(b);
                         }
                         else
