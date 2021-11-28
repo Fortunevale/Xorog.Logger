@@ -74,6 +74,13 @@ public class Logger
 
                     foreach (var b in _loggerObjects.LogsToPost.ToList())
                     {
+                        if (b is null || b.Message is "" || b.TimeOfEvent != new DateTime())
+                        {
+                            LogWarn(null, $"Missed log message due to missing data");
+                            _loggerObjects.LogsToPost.Remove(b);
+                            continue;
+                        }
+
                         string LogLevelText = b.LogLevel.ToString();
                         ConsoleColor LogLevelColor = ConsoleColor.Gray;
 
