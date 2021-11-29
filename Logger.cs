@@ -91,28 +91,28 @@ public class Logger
 
                         if (b.LogLevel == LoggerObjects.LogLevel.DEBUG && maxLogLevel >= LoggerObjects.LogLevel.DEBUG)
                         {
-                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Namespace : "??")}/{(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
+                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
                             Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
                             Console.ResetColor(); Console.WriteLine(b.Message);
                             _loggerObjects.LogsToPost.Remove(b);
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.INFO && maxLogLevel >= LoggerObjects.LogLevel.INFO)
                         {
-                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Namespace : "??")}/{(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
+                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
                             Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
                             Console.ResetColor(); Console.WriteLine(b.Message);
                             _loggerObjects.LogsToPost.Remove(b);
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.WARN && maxLogLevel >= LoggerObjects.LogLevel.WARN)
                         {
-                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Namespace : "??")}/{(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
+                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
                             Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
                             Console.ResetColor(); Console.WriteLine(b.Message);
                             _loggerObjects.LogsToPost.Remove(b);
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.ERROR && maxLogLevel >= LoggerObjects.LogLevel.ERROR)
                         {
-                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Namespace : "??")}/{(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
+                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
                             Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
                             Console.ResetColor(); Console.WriteLine(b.Message);
                             _loggerObjects.LogsToPost.Remove(b);
@@ -120,14 +120,14 @@ public class Logger
                         else if (b.LogLevel == LoggerObjects.LogLevel.FATAL && maxLogLevel >= LoggerObjects.LogLevel.FATAL)
                         {
                             Console.ResetColor();
-                            Console.ForegroundColor = ConsoleColor.Black; Console.BackgroundColor = LogLevelColor; Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Namespace : "??")}/{(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
+                            Console.ForegroundColor = ConsoleColor.Black; Console.BackgroundColor = LogLevelColor; Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
                             Console.Write($"[{LogLevelText}]");
                             Console.ResetColor(); Console.WriteLine($" {b.Message}");
                             _loggerObjects.LogsToPost.Remove(b);
                         }
                         else
                         {
-                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Namespace : "??")}/{(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
+                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
                             Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
                             Console.ResetColor(); Console.WriteLine(b.Message);
                             _loggerObjects.LogsToPost.Remove(b);
@@ -135,7 +135,7 @@ public class Logger
 
                         try
                         {
-                            Byte[] FileWrite = Encoding.UTF8.GetBytes($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Namespace : "??")}/{(b.Source is not null ? b.Source.GetType().Name : "??")}] [{LogLevelText}] {b.Message}\n");
+                            Byte[] FileWrite = Encoding.UTF8.GetBytes($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Name : "??")}] [{LogLevelText}] {b.Message}\n");
                             if (OpenedFile != null)
                             {
                                 await OpenedFile.WriteAsync(FileWrite.AsMemory(0, FileWrite.Length));
@@ -150,7 +150,7 @@ public class Logger
                 }
                 catch (Exception ex)
                 {
-                    Console.ResetColor(); Console.Write($"[{DateTime.Now:dd.MM.yyyy HH:mm:ss} | ??/??] ");
+                    Console.ResetColor(); Console.Write($"[{DateTime.Now:dd.MM.yyyy HH:mm:ss} | ??] ");
                     Console.ForegroundColor = ConsoleColor.DarkRed; Console.Write($"[FATAL] ");
                     Console.ResetColor(); Console.WriteLine($"An error occured while logging: {ex}");
                     await Task.Delay(1000);
