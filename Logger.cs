@@ -25,6 +25,8 @@ public class Logger
     /// <returns>A bool stating if the logger was started</returns>
     public static void StartLogger(string filePath = "", LoggerObjects.LogLevel level = LoggerObjects.LogLevel.DEBUG, DateTime cleanUpBefore = new DateTime(), bool ThrowOnFailedDeletion = false)
     {
+        GC.KeepAlive(_loggerObjects.LogsToPost);
+
         if (loggerStarted)
             throw new Exception($"The logger is already started");
 
@@ -72,10 +74,10 @@ public class Logger
                         continue;
                     }
 
-                    GC.KeepAlive(_loggerObjects.LogsToPost);
-
                     foreach (var b in _loggerObjects.LogsToPost.ToList())
                     {
+                        GC.KeepAlive(b);
+
                         string LogLevelText = b.LogLevel.ToString();
                         ConsoleColor LogLevelColor = ConsoleColor.Gray;
 
