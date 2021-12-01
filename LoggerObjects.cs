@@ -8,7 +8,6 @@ public class LoggerObjects
     {
         public DateTime TimeOfEvent { get; set; }
         public LogLevel LogLevel { get; set; }
-        public object? Source { get; set; } = new object();
         public string? Message { get; set; }
     }
 

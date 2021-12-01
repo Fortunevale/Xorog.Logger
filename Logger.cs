@@ -49,13 +49,13 @@ public class Logger
                     if (fi.CreationTimeUtc < cleanUpBefore)
                     {
                         fi.Delete();
-                        LogDebug(null, $"{fi.Name} deleted");
+                        LogDebug($"{fi.Name} deleted");
                     }
                 }
                 catch (Exception ex)
                 {
                     if (!ThrowOnFailedDeletion)
-                        LogError(null, $"Couldn't delete log file {b}: {ex}");
+                        LogError( $"Couldn't delete log file {b}: {ex}");
                     else
                         throw new Exception($"Failed to delete {b}: {ex}");
                 }
@@ -93,28 +93,28 @@ public class Logger
 
                         if (b.LogLevel == LoggerObjects.LogLevel.DEBUG && maxLogLevel >= LoggerObjects.LogLevel.DEBUG)
                         {
-                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
+                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
                             Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
                             Console.ResetColor(); Console.WriteLine(b.Message);
                             _loggerObjects.LogsToPost.Remove(b);
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.INFO && maxLogLevel >= LoggerObjects.LogLevel.INFO)
                         {
-                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
+                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
                             Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
                             Console.ResetColor(); Console.WriteLine(b.Message);
                             _loggerObjects.LogsToPost.Remove(b);
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.WARN && maxLogLevel >= LoggerObjects.LogLevel.WARN)
                         {
-                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
+                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
                             Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
                             Console.ResetColor(); Console.WriteLine(b.Message);
                             _loggerObjects.LogsToPost.Remove(b);
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.ERROR && maxLogLevel >= LoggerObjects.LogLevel.ERROR)
                         {
-                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
+                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
                             Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
                             Console.ResetColor(); Console.WriteLine(b.Message);
                             _loggerObjects.LogsToPost.Remove(b);
@@ -122,14 +122,14 @@ public class Logger
                         else if (b.LogLevel == LoggerObjects.LogLevel.FATAL && maxLogLevel >= LoggerObjects.LogLevel.FATAL)
                         {
                             Console.ResetColor();
-                            Console.ForegroundColor = ConsoleColor.Black; Console.BackgroundColor = LogLevelColor; Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
+                            Console.ForegroundColor = ConsoleColor.Black; Console.BackgroundColor = LogLevelColor; Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
                             Console.Write($"[{LogLevelText}]");
                             Console.ResetColor(); Console.WriteLine($" {b.Message}");
                             _loggerObjects.LogsToPost.Remove(b);
                         }
                         else
                         {
-                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Name : "??")}] ");
+                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
                             Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
                             Console.ResetColor(); Console.WriteLine(b.Message);
                             _loggerObjects.LogsToPost.Remove(b);
@@ -137,7 +137,7 @@ public class Logger
 
                         try
                         {
-                            Byte[] FileWrite = Encoding.UTF8.GetBytes($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss} | {(b.Source is not null ? b.Source.GetType().Name : "??")}] [{LogLevelText}] {b.Message}\n");
+                            Byte[] FileWrite = Encoding.UTF8.GetBytes($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] [{LogLevelText}] {b.Message}\n");
                             if (OpenedFile != null)
                             {
                                 await OpenedFile.WriteAsync(FileWrite.AsMemory(0, FileWrite.Length));
@@ -146,7 +146,7 @@ public class Logger
                         }
                         catch (Exception ex)
                         {
-                            LogFatal(null, $"Couldn't write log to file: {ex}");
+                            LogFatal($"Couldn't write log to file: {ex}");
                         }
                     }
                 }
@@ -202,14 +202,13 @@ public class Logger
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="message"></param>
-    public static void Log(object? sender, string message)
+    public static void Log(string message)
     {
         _loggerObjects.LogsToPost.Add(new LoggerObjects.LogEntry
         {
             TimeOfEvent = DateTime.Now,
             LogLevel = LoggerObjects.LogLevel.NONE,
-            Message = message,
-            Source = sender
+            Message = message
         });
     }
 
@@ -220,14 +219,13 @@ public class Logger
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="message"></param>
-    public static void LogDebug(object? sender, string message)
+    public static void LogDebug(string message)
     {
         _loggerObjects.LogsToPost.Add(new LoggerObjects.LogEntry
         {
             TimeOfEvent = DateTime.Now,
             LogLevel = LoggerObjects.LogLevel.DEBUG,
-            Message = message,
-            Source = sender
+            Message = message
         });
     }
 
@@ -238,14 +236,13 @@ public class Logger
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="message"></param>
-    public static void LogInfo(object? sender, string message)
+    public static void LogInfo(string message)
     {
         _loggerObjects.LogsToPost.Add(new LoggerObjects.LogEntry
         {
             TimeOfEvent = DateTime.Now,
             LogLevel = LoggerObjects.LogLevel.INFO,
-            Message = message,
-            Source = sender
+            Message = message
         });
     }
 
@@ -256,14 +253,13 @@ public class Logger
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="message"></param>
-    public static void LogWarn(object? sender, string message)
+    public static void LogWarn(string message)
     {
         _loggerObjects.LogsToPost.Add(new LoggerObjects.LogEntry
         {
             TimeOfEvent = DateTime.Now,
             LogLevel = LoggerObjects.LogLevel.WARN,
-            Message = message,
-            Source = sender
+            Message = message
         });
     }
 
@@ -274,14 +270,13 @@ public class Logger
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="message"></param>
-    public static void LogError(object? sender, string message)
+    public static void LogError(string message)
     {
         _loggerObjects.LogsToPost.Add(new LoggerObjects.LogEntry
         {
             TimeOfEvent = DateTime.Now,
             LogLevel = LoggerObjects.LogLevel.ERROR,
-            Message = message,
-            Source = sender
+            Message = message
         });
     }
 
@@ -292,14 +287,13 @@ public class Logger
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="message"></param>
-    public static void LogFatal(object? sender, string message)
+    public static void LogFatal(string message)
     {
         _loggerObjects.LogsToPost.Add(new LoggerObjects.LogEntry
         {
             TimeOfEvent = DateTime.Now,
             LogLevel = LoggerObjects.LogLevel.FATAL,
-            Message = message,
-            Source = sender
+            Message = message
         });
     }
 }
