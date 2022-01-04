@@ -77,6 +77,9 @@ public class Logger
                     foreach (var b in _loggerObjects.LogsToPost.ToList())
                     {
                         GC.KeepAlive(b);
+                        GC.KeepAlive(b.LogLevel);
+                        GC.KeepAlive(b.Message);
+                        GC.KeepAlive(b.TimeOfEvent);
 
                         string LogLevelText = b.LogLevel.ToString();
                         ConsoleColor LogLevelColor = ConsoleColor.Gray;
