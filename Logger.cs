@@ -76,6 +76,12 @@ public class Logger
 
                     foreach (var b in _loggerObjects.LogsToPost.ToList())
                     {
+                        if (b == null || b.Message == null)
+                        {
+                            _loggerObjects.LogsToPost.Remove(b);
+                            continue;
+                        }
+
                         GC.KeepAlive(b);
                         GC.KeepAlive(b.LogLevel);
                         GC.KeepAlive(b.Message);
