@@ -78,6 +78,7 @@ public class Logger
                     {
                         if (b == null || b.Message == null)
                         {
+                            LogWarn($"Missed log message due to garbage collection");
                             _loggerObjects.LogsToPost.Remove(b);
                             continue;
                         }
