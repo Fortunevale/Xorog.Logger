@@ -8,11 +8,11 @@ public class Logger
     private static LoggerObjects.LogLevel maxLogLevel = LoggerObjects.LogLevel.DEBUG;
 
     private static string FileName = "";
-    private static FileStream? OpenedFile { get; set; }
+    private static FileStream OpenedFile { get; set; }
 
     private readonly static LoggerObjects _loggerObjects = new();
 
-    private static Task? RunningLogger = null;
+    private static Task RunningLogger = null;
 
 
 
