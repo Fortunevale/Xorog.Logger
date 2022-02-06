@@ -8,7 +8,7 @@ public class LoggerObjects
     {
         public DateTime TimeOfEvent { get; set; }
         public LogLevel LogLevel { get; set; }
-        public string? Message { get; set; }
+        public string Message { get; set; }
     }
 
     public enum LogLevel
