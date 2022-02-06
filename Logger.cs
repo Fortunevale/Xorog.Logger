@@ -112,7 +112,7 @@ public class Logger
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.INFO)
                         {
-                            if (maxLogLevel == LoggerObjects.LogLevel.DEBUG || maxLogLevel == LoggerObjects.LogLevel.INFO)
+                            if (maxLogLevel is LoggerObjects.LogLevel.DEBUG or LoggerObjects.LogLevel.INFO)
                             {
                                 Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
                                 Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
@@ -121,7 +121,7 @@ public class Logger
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.WARN)
                         {
-                            if (maxLogLevel == LoggerObjects.LogLevel.DEBUG || maxLogLevel == LoggerObjects.LogLevel.INFO || maxLogLevel == LoggerObjects.LogLevel.WARN)
+                            if (maxLogLevel is LoggerObjects.LogLevel.DEBUG or LoggerObjects.LogLevel.INFO or LoggerObjects.LogLevel.WARN)
                             {
                                 Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
                                 Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
@@ -130,7 +130,7 @@ public class Logger
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.ERROR)
                         {
-                            if (maxLogLevel == LoggerObjects.LogLevel.DEBUG || maxLogLevel == LoggerObjects.LogLevel.INFO || maxLogLevel == LoggerObjects.LogLevel.WARN || maxLogLevel == LoggerObjects.LogLevel.ERROR)
+                            if (maxLogLevel is LoggerObjects.LogLevel.DEBUG or LoggerObjects.LogLevel.INFO or LoggerObjects.LogLevel.WARN or LoggerObjects.LogLevel.ERROR)
                             {
                                 Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
                                 Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
@@ -139,7 +139,7 @@ public class Logger
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.FATAL && maxLogLevel >= LoggerObjects.LogLevel.FATAL)
                         {
-                            if (maxLogLevel == LoggerObjects.LogLevel.DEBUG || maxLogLevel == LoggerObjects.LogLevel.INFO || maxLogLevel == LoggerObjects.LogLevel.WARN || maxLogLevel == LoggerObjects.LogLevel.ERROR || maxLogLevel == LoggerObjects.LogLevel.FATAL)
+                            if (maxLogLevel is LoggerObjects.LogLevel.DEBUG or LoggerObjects.LogLevel.INFO or LoggerObjects.LogLevel.WARN or LoggerObjects.LogLevel.ERROR or LoggerObjects.LogLevel.FATAL)
                             {
                                 Console.ResetColor();
                                 Console.ForegroundColor = ConsoleColor.Black; Console.BackgroundColor = LogLevelColor; Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
