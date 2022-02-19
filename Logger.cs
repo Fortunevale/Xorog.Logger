@@ -89,6 +89,10 @@ public class Logger
                         GC.KeepAlive(b.TimeOfEvent);
 
                         string LogLevelText = b.LogLevel.ToString();
+
+                        if (LogLevelText.Length != 5)
+                            LogLevelText += " ";
+
                         ConsoleColor LogLevelColor = ConsoleColor.Gray;
 
                         LogLevelColor = b.LogLevel switch
