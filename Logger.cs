@@ -25,8 +25,6 @@ public class Logger
     /// <returns>A bool stating if the logger was started</returns>
     public static void StartLogger(string filePath = "", LoggerObjects.LogLevel level = LoggerObjects.LogLevel.DEBUG, DateTime cleanUpBefore = new DateTime(), bool ThrowOnFailedDeletion = false)
     {
-        GC.KeepAlive(_loggerObjects.LogsToPost);
-
         if (loggerStarted)
             throw new Exception($"The logger is already started");
 
@@ -59,7 +57,7 @@ public class Logger
                     else
                         throw new Exception($"Failed to delete {b}: {ex}");
                 }
-            } 
+            }
         }
 
         RunningLogger = Task.Run(async () =>
@@ -82,11 +80,6 @@ public class Logger
                             _loggerObjects.LogsToPost.Remove(b);
                             continue;
                         }
-
-                        GC.KeepAlive(b);
-                        GC.KeepAlive(b.LogLevel);
-                        GC.KeepAlive(b.Message);
-                        GC.KeepAlive(b.TimeOfEvent);
 
                         string LogLevelText = b.LogLevel.ToString();
 
@@ -111,7 +104,7 @@ public class Logger
                             {
                                 Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
                                 Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
-                                Console.ResetColor(); Console.WriteLine(b.Message); 
+                                Console.ResetColor(); Console.WriteLine(b.Message);
                             }
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.INFO)
@@ -120,7 +113,7 @@ public class Logger
                             {
                                 Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
                                 Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
-                                Console.ResetColor(); Console.WriteLine(b.Message); 
+                                Console.ResetColor(); Console.WriteLine(b.Message);
                             }
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.WARN)
@@ -129,7 +122,7 @@ public class Logger
                             {
                                 Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
                                 Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
-                                Console.ResetColor(); Console.WriteLine(b.Message); 
+                                Console.ResetColor(); Console.WriteLine(b.Message);
                             }
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.ERROR)
@@ -138,7 +131,7 @@ public class Logger
                             {
                                 Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
                                 Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
-                                Console.ResetColor(); Console.WriteLine(b.Message); 
+                                Console.ResetColor(); Console.WriteLine(b.Message);
                             }
                         }
                         else if (b.LogLevel == LoggerObjects.LogLevel.FATAL && maxLogLevel >= LoggerObjects.LogLevel.FATAL)
@@ -148,7 +141,7 @@ public class Logger
                                 Console.ResetColor();
                                 Console.ForegroundColor = ConsoleColor.Black; Console.BackgroundColor = LogLevelColor; Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
                                 Console.Write($"[{LogLevelText}]");
-                                Console.ResetColor(); Console.WriteLine($" {b.Message}"); 
+                                Console.ResetColor(); Console.WriteLine($" {b.Message}");
                             }
                         }
                         else
@@ -173,6 +166,11 @@ public class Logger
                         {
                             LogFatal($"Couldn't write log to file: {ex}");
                         }
+
+                        GC.KeepAlive(b);
+                        GC.KeepAlive(b.LogLevel);
+                        GC.KeepAlive(b.Message);
+                        GC.KeepAlive(b.TimeOfEvent);
                     }
                 }
                 catch (Exception ex)
@@ -185,6 +183,8 @@ public class Logger
                 }
             }
         });
+
+        GC.KeepAlive(_loggerObjects.LogsToPost);
     }
 
 
