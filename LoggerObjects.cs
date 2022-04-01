@@ -4,7 +4,7 @@ public class LoggerObjects
 {
     internal List<LogEntry> LogsToPost = new();
 
-    internal class LogEntry
+    public class LogEntry
     {
         public DateTime TimeOfEvent { get; set; }
         public LogLevel LogLevel { get; set; }

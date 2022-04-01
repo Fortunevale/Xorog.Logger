@@ -14,6 +14,7 @@ public class Logger
 
     private static Task RunningLogger = null;
 
+    public static event EventHandler<LogMessageEventArgs> LogRaised;
 
 
     /// <summary>
@@ -150,6 +151,8 @@ public class Logger
                             Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
                             Console.ResetColor(); Console.WriteLine(b.Message);
                         }
+
+                        LogRaised(null, new LogMessageEventArgs() { LogEntry = b });
 
                         _loggerObjects.LogsToPost.Remove(b);
 
