@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.IO;
 
 namespace Xorog.Logger;
 
@@ -40,7 +41,7 @@ public class Logger
 
         if (cleanUpBefore != new DateTime())
         {
-            foreach (var b in Directory.GetFiles("logs"))
+            foreach (var b in Directory.GetFiles(new FileInfo(filePath).Directory.FullName))
             {
                 try
                 {
@@ -152,7 +153,7 @@ public class Logger
                             Console.ResetColor(); Console.WriteLine(b.Message);
                         }
 
-                        LogRaised(null, new LogMessageEventArgs() { LogEntry = b });
+                        LogRaised?.Invoke(null, new LogMessageEventArgs() { LogEntry = b });
 
                         _loggerObjects.LogsToPost.Remove(b);
 
