@@ -153,7 +153,10 @@ public class Logger
                             Console.ResetColor(); Console.WriteLine(b.Message);
                         }
 
-                        LogRaised?.Invoke(null, new LogMessageEventArgs() { LogEntry = b });
+                        _ = Task.Run(() =>
+                        {
+                            LogRaised?.Invoke(null, new LogMessageEventArgs() { LogEntry = b });
+                        });
 
                         _loggerObjects.LogsToPost.Remove(b);
 
