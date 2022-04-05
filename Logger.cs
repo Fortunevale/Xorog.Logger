@@ -33,7 +33,7 @@ public class Logger
         if (filePath is not "")
         {
             FileName = filePath;
-            OpenedFile = File.Open(FileName, FileMode.Append);
+            OpenedFile = File.Open(FileName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
         }
 
         loggerStarted = true;
