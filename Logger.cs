@@ -57,7 +57,7 @@ public class Logger : ILogger
                 catch (Exception ex)
                 {
                     if (!ThrowOnFailedDeletion)
-                        LogError( $"Couldn't delete log file {b}: {ex}");
+                        LogError( $"Couldn't delete log file {b}", ex);
                     else
                         throw new Exception($"Failed to delete {b}: {ex}");
                 }
@@ -211,7 +211,7 @@ public class Logger : ILogger
 
                         try
                         {
-                            Byte[] FileWrite = Encoding.UTF8.GetBytes($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] [{LogLevelText}] {LogMessage}\n");
+                            Byte[] FileWrite = Encoding.UTF8.GetBytes($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] [{LogLevelText}] {LogMessage}\n{(b.Exception is not null ? $"{b.Exception.ToString()}\n" : "")}");
                             if (OpenedFile != null)
                             {
                                 await OpenedFile.WriteAsync(FileWrite.AsMemory(0, FileWrite.Length));
