@@ -16,5 +16,9 @@ public class LoggerProvider : ILoggerProvider
         return _loggers.GetOrAdd(categoryName, name => new Logger());
     }
 
-    public void Dispose() => _loggers.Clear();
+    public void Dispose()
+    {
+        _loggers.Clear();
+        GC.SuppressFinalize(this);
+    }
 }

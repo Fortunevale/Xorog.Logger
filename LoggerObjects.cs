@@ -15,13 +15,13 @@ public class LoggerObjects
 
     public enum LogLevel
     {
+        NONE,
         FATAL,
         ERROR,
         WARN,
         INFO,
         DEBUG,
         DEBUG2,
-        TRACE,
-        NONE
+        TRACE
     }
 }

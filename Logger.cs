@@ -70,148 +70,72 @@ public class Logger : ILogger
             {
                 try
                 {
-                    if (_loggerObjects.LogsToPost.Count == 0)
+                    while (_loggerObjects.LogsToPost.Count == 0)
                     {
                         Thread.Sleep(10);
-                        continue;
                     }
 
-                    foreach (var b in _loggerObjects.LogsToPost.ToList())
+                    for (int i = 0; i < _loggerObjects.LogsToPost.Count; i++)
                     {
-                        if (b == null || b.Message == null)
+                        var currentLog = _loggerObjects.LogsToPost.First();
+                        _loggerObjects.LogsToPost.Remove(currentLog);
+
+                        if (currentLog is null || currentLog.Message is null)
                         {
                             LogWarn($"Missed log message due to garbage collection");
-                            _loggerObjects.LogsToPost.Remove(b);
+                            _loggerObjects.LogsToPost.Remove(currentLog);
                             continue;
                         }
 
-                        string LogLevelText = b.LogLevel.ToString();
+                        string LogLevelText = currentLog.LogLevel.ToString();
 
                         if (LogLevelText.Length < 6)
                             LogLevelText += new string(' ', 6 - LogLevelText.Length);
 
-                        ConsoleColor LogLevelColor = ConsoleColor.Gray;
+                        ConsoleColor LogLevelColor;
+                        ConsoleColor BackgroundColor;
 
-                        LogLevelColor = b.LogLevel switch
+                        LogLevelColor = currentLog.LogLevel switch
                         {
+                            LoggerObjects.LogLevel.TRACE => ConsoleColor.DarkGray,
+                            LoggerObjects.LogLevel.DEBUG2 => ConsoleColor.DarkGray,
                             LoggerObjects.LogLevel.DEBUG => ConsoleColor.Gray,
                             LoggerObjects.LogLevel.INFO => ConsoleColor.Green,
                             LoggerObjects.LogLevel.WARN => ConsoleColor.Yellow,
                             LoggerObjects.LogLevel.ERROR => ConsoleColor.Red,
-                            LoggerObjects.LogLevel.FATAL => ConsoleColor.DarkRed,
+                            LoggerObjects.LogLevel.FATAL => ConsoleColor.Black,
                             _ => ConsoleColor.Gray
                         };
 
-                        string LogMessage = b.Message;
+                        BackgroundColor = currentLog.LogLevel switch
+                        {
+                            LoggerObjects.LogLevel.FATAL => ConsoleColor.DarkRed,
+                            _ => ConsoleColor.Black
+                        };
+
+                        string LogMessage = currentLog.Message;
 
                         foreach (var blacklistobject in _loggerObjects.Blacklist)
                             LogMessage = LogMessage.Replace(blacklistobject, new String('*', blacklistobject.Length), StringComparison.CurrentCultureIgnoreCase);
 
-                        if (b.LogLevel == LoggerObjects.LogLevel.TRACE)
+                        if (maxLogLevel >= currentLog.LogLevel)
                         {
-                            if (maxLogLevel == LoggerObjects.LogLevel.TRACE)
-                            {
-                                Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
-                                Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
-                                Console.ResetColor(); Console.WriteLine(LogMessage);
+                            Console.ResetColor(); Console.Write($"[{currentLog.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
+                            Console.ForegroundColor = LogLevelColor; Console.BackgroundColor = BackgroundColor; Console.Write($"[{LogLevelText}]");
+                            Console.ResetColor(); Console.WriteLine($" {LogMessage}");
 
-                                if (b.Exception is not null)
-                                    Console.WriteLine(b.Exception.ToString());
-                            }
-                        }
-                        else if (b.LogLevel == LoggerObjects.LogLevel.DEBUG2)
-                        {
-                            if (maxLogLevel is LoggerObjects.LogLevel.DEBUG2 or LoggerObjects.LogLevel.TRACE)
-                            {
-                                Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
-                                Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
-                                Console.ResetColor(); Console.WriteLine(LogMessage);
-
-                                if (b.Exception is not null)
-                                    Console.WriteLine(b.Exception.ToString());
-                            }
-                        }
-                        else if (b.LogLevel == LoggerObjects.LogLevel.DEBUG)
-                        {
-                            if (maxLogLevel is LoggerObjects.LogLevel.DEBUG or LoggerObjects.LogLevel.DEBUG2 or LoggerObjects.LogLevel.TRACE)
-                            {
-                                Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
-                                Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
-                                Console.ResetColor(); Console.WriteLine(LogMessage);
-
-                                if (b.Exception is not null)
-                                    Console.WriteLine(b.Exception.ToString());
-                            }
-                        }
-                        else if (b.LogLevel == LoggerObjects.LogLevel.INFO)
-                        {
-                            if (maxLogLevel is LoggerObjects.LogLevel.DEBUG or LoggerObjects.LogLevel.INFO or LoggerObjects.LogLevel.DEBUG2 or LoggerObjects.LogLevel.TRACE)
-                            {
-                                Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
-                                Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
-                                Console.ResetColor(); Console.WriteLine(LogMessage);
-
-                                if (b.Exception is not null)
-                                    Console.WriteLine(b.Exception.ToString());
-                            }
-                        }
-                        else if (b.LogLevel == LoggerObjects.LogLevel.WARN)
-                        {
-                            if (maxLogLevel is LoggerObjects.LogLevel.DEBUG or LoggerObjects.LogLevel.INFO or LoggerObjects.LogLevel.WARN or LoggerObjects.LogLevel.DEBUG2 or LoggerObjects.LogLevel.TRACE)
-                            {
-                                Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
-                                Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
-                                Console.ResetColor(); Console.WriteLine(LogMessage);
-
-                                if (b.Exception is not null)
-                                    Console.WriteLine(b.Exception.ToString());
-                            }
-                        }
-                        else if (b.LogLevel == LoggerObjects.LogLevel.ERROR)
-                        {
-                            if (maxLogLevel is LoggerObjects.LogLevel.DEBUG or LoggerObjects.LogLevel.INFO or LoggerObjects.LogLevel.WARN or LoggerObjects.LogLevel.ERROR or LoggerObjects.LogLevel.DEBUG2 or LoggerObjects.LogLevel.TRACE)
-                            {
-                                Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
-                                Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
-                                Console.ResetColor(); Console.WriteLine(LogMessage);
-
-                                if (b.Exception is not null)
-                                    Console.WriteLine(b.Exception.ToString());
-                            }
-                        }
-                        else if (b.LogLevel == LoggerObjects.LogLevel.FATAL && maxLogLevel >= LoggerObjects.LogLevel.FATAL)
-                        {
-                            if (maxLogLevel is LoggerObjects.LogLevel.DEBUG or LoggerObjects.LogLevel.INFO or LoggerObjects.LogLevel.WARN or LoggerObjects.LogLevel.ERROR or LoggerObjects.LogLevel.FATAL or LoggerObjects.LogLevel.DEBUG2 or LoggerObjects.LogLevel.TRACE)
-                            {
-                                Console.ResetColor();
-                                Console.ForegroundColor = ConsoleColor.Black; Console.BackgroundColor = LogLevelColor; Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
-                                Console.Write($"[{LogLevelText}]");
-                                Console.ResetColor(); Console.WriteLine($" {LogMessage}");
-
-                                if (b.Exception is not null)
-                                    Console.WriteLine(b.Exception.ToString());
-                            }
-                        }
-                        else
-                        {
-                            Console.ResetColor(); Console.Write($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
-                            Console.ForegroundColor = LogLevelColor; Console.Write($"[{LogLevelText}] ");
-                            Console.ResetColor(); Console.WriteLine(LogMessage);
-
-                            if (b.Exception is not null)
-                                Console.WriteLine(b.Exception.ToString());
+                            if (currentLog.Exception is not null)
+                                Console.WriteLine(currentLog.Exception.ToString());
                         }
 
                         _ = Task.Run(() =>
                         {
-                            LogRaised?.Invoke(null, new LogMessageEventArgs() { LogEntry = b });
+                            LogRaised?.Invoke(null, new LogMessageEventArgs() { LogEntry = currentLog });
                         });
-
-                        _loggerObjects.LogsToPost.Remove(b);
 
                         try
                         {
-                            Byte[] FileWrite = Encoding.UTF8.GetBytes($"[{b.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] [{LogLevelText}] {LogMessage}\n{(b.Exception is not null ? $"{b.Exception.ToString()}\n" : "")}");
+                            Byte[] FileWrite = Encoding.UTF8.GetBytes($"[{currentLog.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] [{LogLevelText}] {LogMessage}\n{(currentLog.Exception is not null ? $"{currentLog.Exception}\n" : "")}");
                             if (OpenedFile != null)
                             {
                                 await OpenedFile.WriteAsync(FileWrite.AsMemory(0, FileWrite.Length));
@@ -222,25 +146,17 @@ public class Logger : ILogger
                         {
                             LogFatal($"Couldn't write log to file: {ex}");
                         }
-
-                        GC.KeepAlive(b);
-                        GC.KeepAlive(b.LogLevel);
-                        GC.KeepAlive(b.Message);
-                        GC.KeepAlive(b.TimeOfEvent);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.ResetColor(); Console.Write($"[{DateTime.Now:dd.MM.yyyy HH:mm:ss} | ??] ");
-                    Console.ForegroundColor = ConsoleColor.DarkRed; Console.Write($"[FATAL] ");
-                    Console.ResetColor(); Console.WriteLine($"An error occured while logging: {ex}");
+                    LogError("An exception occured while trying to display a log message", ex);
                     await Task.Delay(1000);
                     continue;
                 }
             }
         });
 
-        GC.KeepAlive(_loggerObjects.LogsToPost);
         return new Logger();
     }
 
@@ -286,6 +202,60 @@ public class Logger : ILogger
     public static void ChangeLogLevel(LoggerObjects.LogLevel level)
     {
         maxLogLevel = level;
+    }
+
+
+
+    /// <summary>
+    /// Log with none log level
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="message"></param>
+    public static void LogNone(string message, Exception? exception = null)
+    {
+        _loggerObjects.LogsToPost.Add(new LoggerObjects.LogEntry
+        {
+            TimeOfEvent = DateTime.Now,
+            LogLevel = LoggerObjects.LogLevel.NONE,
+            Message = message,
+            Exception = exception
+        });
+    }
+
+
+
+    /// <summary>
+    /// Log with trace log level
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="message"></param>
+    public static void LogTrace(string message, Exception? exception = null)
+    {
+        _loggerObjects.LogsToPost.Add(new LoggerObjects.LogEntry
+        {
+            TimeOfEvent = DateTime.Now,
+            LogLevel = LoggerObjects.LogLevel.TRACE,
+            Message = message,
+            Exception = exception
+        });
+    }
+
+
+
+    /// <summary>
+    /// Log with debug2 log level
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="message"></param>
+    public static void LogDebug2(string message, Exception? exception = null)
+    {
+        _loggerObjects.LogsToPost.Add(new LoggerObjects.LogEntry
+        {
+            TimeOfEvent = DateTime.Now,
+            LogLevel = LoggerObjects.LogLevel.DEBUG2,
+            Message = message,
+            Exception = exception
+        });
     }
 
 
@@ -409,10 +379,14 @@ public class Logger : ILogger
         });
     }
 
+
+
     public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel)
     {
         return loggerStarted;
     }
+
+
 
     public IDisposable BeginScope<TState>(TState state)
     {
