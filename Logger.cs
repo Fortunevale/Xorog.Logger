@@ -77,13 +77,12 @@ public class Logger : ILogger
 
                     for (int i = 0; i < _loggerObjects.LogsToPost.Count; i++)
                     {
-                        var currentLog = _loggerObjects.LogsToPost.First();
+                        var currentLog = _loggerObjects.LogsToPost[0];
                         _loggerObjects.LogsToPost.Remove(currentLog);
 
-                        if (currentLog is null || currentLog.Message is null)
+
+                        if (currentLog is null)
                         {
-                            LogWarn($"Missed log message due to garbage collection");
-                            _loggerObjects.LogsToPost.Remove(currentLog);
                             continue;
                         }
 
