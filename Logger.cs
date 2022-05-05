@@ -96,8 +96,8 @@ public class Logger : ILogger
 
                         LogLevelColor = currentLog.LogLevel switch
                         {
-                            LoggerObjects.LogLevel.TRACE => ConsoleColor.DarkGray,
-                            LoggerObjects.LogLevel.DEBUG2 => ConsoleColor.DarkGray,
+                            LoggerObjects.LogLevel.TRACE => ConsoleColor.Gray,
+                            LoggerObjects.LogLevel.DEBUG2 => ConsoleColor.Gray,
                             LoggerObjects.LogLevel.DEBUG => ConsoleColor.Gray,
                             LoggerObjects.LogLevel.INFO => ConsoleColor.Green,
                             LoggerObjects.LogLevel.WARN => ConsoleColor.Yellow,
