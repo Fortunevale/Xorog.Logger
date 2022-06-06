@@ -134,11 +134,14 @@ public class Logger : ILogger
 
                         try
                         {
-                            Byte[] FileWrite = Encoding.UTF8.GetBytes($"[{currentLog.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] [{LogLevelText}] {LogMessage}\n{(currentLog.Exception is not null ? $"{currentLog.Exception}\n" : "")}");
-                            if (OpenedFile != null)
+                            if (!_loggerObjects.FileBlackList.Contains(currentLog.LogLevel))
                             {
-                                await OpenedFile.WriteAsync(FileWrite.AsMemory(0, FileWrite.Length));
-                                OpenedFile.Flush();
+                                Byte[] FileWrite = Encoding.UTF8.GetBytes($"[{currentLog.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] [{LogLevelText}] {LogMessage}\n{(currentLog.Exception is not null ? $"{currentLog.Exception}\n" : "")}");
+                                if (OpenedFile != null)
+                                {
+                                    await OpenedFile.WriteAsync(FileWrite.AsMemory(0, FileWrite.Length));
+                                    OpenedFile.Flush();
+                                }
                             }
                         }
                         catch (Exception ex)
@@ -190,6 +193,15 @@ public class Logger : ILogger
     public static void AddBlacklist(string blacklist)
     {
         _loggerObjects.Blacklist.Add(blacklist);
+    }
+    
+    /// <summary>
+    /// Add blacklisted log level to not save
+    /// </summary>
+    /// <param name="blacklist"></param>
+    public static void AddLogLevelBlacklist(LoggerObjects.LogLevel level)
+    {
+        _loggerObjects.FileBlackList.Add(level);
     }
 
 
@@ -365,7 +377,7 @@ public class Logger : ILogger
             LogLevel = logLevel switch
             {
                 Microsoft.Extensions.Logging.LogLevel.Debug => LoggerObjects.LogLevel.DEBUG2,
-                Microsoft.Extensions.Logging.LogLevel.Trace => LoggerObjects.LogLevel.TRACE,
+                Microsoft.Extensions.Logging.LogLevel.Trace => LoggerObjects.LogLevel.TRACE2,
                 Microsoft.Extensions.Logging.LogLevel.Information => LoggerObjects.LogLevel.INFO,
                 Microsoft.Extensions.Logging.LogLevel.Warning => LoggerObjects.LogLevel.WARN,
                 Microsoft.Extensions.Logging.LogLevel.Error => LoggerObjects.LogLevel.ERROR,

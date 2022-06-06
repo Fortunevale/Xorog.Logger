@@ -4,6 +4,7 @@ public class LoggerObjects
 {
     internal List<LogEntry> LogsToPost = new();
     internal List<string> Blacklist = new();
+    internal List<LogLevel> FileBlackList = new();
 
     public class LogEntry
     {
@@ -22,6 +23,7 @@ public class LoggerObjects
         INFO,
         DEBUG,
         DEBUG2,
-        TRACE
+        TRACE,
+        TRACE2
     }
 }
