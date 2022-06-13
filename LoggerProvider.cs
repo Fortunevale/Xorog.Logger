@@ -9,16 +9,20 @@ using System.Threading.Tasks;
 namespace Xorog.Logger;
 public class LoggerProvider : ILoggerProvider
 {
-    private readonly ConcurrentDictionary<string, Logger> _loggers = new(StringComparer.OrdinalIgnoreCase);
+    internal LoggerProvider(Logger logger)
+    {
+        _logger = logger;
+    }
+
+    private Logger _logger { get; set; }
 
     public ILogger CreateLogger(string categoryName)
     {
-        return _loggers.GetOrAdd(categoryName, name => new Logger());
+        return _logger;
     }
 
     public void Dispose()
     {
-        _loggers.Clear();
         GC.SuppressFinalize(this);
     }
 }

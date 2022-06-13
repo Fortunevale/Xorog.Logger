@@ -4,6 +4,8 @@ public class Logger : ILogger
 {
     internal Logger() { }
 
+    public LoggerProvider _provider { get; internal set; }
+
     private bool loggerStarted = false;
     private LogLevel maxLogLevel = LogLevel.DEBUG;
 
@@ -29,6 +31,7 @@ public class Logger : ILogger
     public static Logger StartLogger(string filePath = "", LogLevel level = LogLevel.DEBUG, DateTime cleanUpBefore = new DateTime(), bool ThrowOnFailedDeletion = false)
     {
         var handler = new Logger();
+        handler._provider = new(handler);
 
         if (handler.loggerStarted)
             throw new Exception($"The logger is already started");
