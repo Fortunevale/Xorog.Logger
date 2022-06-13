@@ -160,7 +160,7 @@ public class Logger : ILogger
             }
         });
 
-        return new Logger();
+        return handler;
     }
 
 
