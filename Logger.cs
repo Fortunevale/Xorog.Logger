@@ -1,5 +1,7 @@
 ﻿namespace Xorog.Logger;
 
+#pragma warning disable IDE1006 // Naming Styles
+
 public class Logger : ILogger
 {
     internal Logger() { }
@@ -128,7 +130,7 @@ public class Logger : ILogger
                             Console.ResetColor(); Console.WriteLine($" {LogMessage}");
 
                             if (currentLog.Exception is not null)
-                                Console.WriteLine(currentLog.Exception.ToString());
+                                Console.WriteLine(currentLog.Exception);
                         }
 
                         _ = Task.Run(() =>

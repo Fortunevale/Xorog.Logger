@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+#pragma warning disable IDE1006 // Naming Styles
 namespace Xorog.Logger;
 public class LoggerProvider : ILoggerProvider
 {
@@ -13,6 +13,7 @@ public class LoggerProvider : ILoggerProvider
     {
         _logger = logger;
     }
+
 
     private Logger _logger { get; set; }
 
