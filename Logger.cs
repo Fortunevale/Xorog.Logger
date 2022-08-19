@@ -125,7 +125,7 @@ public class Logger : ILogger
 
                         if (handler.maxLogLevel >= currentLog.LogLevel)
                         {
-                            Console.ResetColor(); Console.Write($"[{currentLog.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] ");
+                            Console.ResetColor(); Console.Write($"[{currentLog.TimeOfEvent:dd.MM.yyyy HH:mm:ss:fff}] ");
                             Console.ForegroundColor = LogLevelColor; Console.BackgroundColor = BackgroundColor; Console.Write($"[{LogLevelText}]");
                             Console.ResetColor(); Console.WriteLine($" {LogMessage}");
 
@@ -142,7 +142,7 @@ public class Logger : ILogger
                         {
                             if (!handler.FileBlackList.Contains(currentLog.LogLevel))
                             {
-                                Byte[] FileWrite = Encoding.UTF8.GetBytes($"[{currentLog.TimeOfEvent:dd.MM.yyyy HH:mm:ss}] [{LogLevelText}] {LogMessage}\n{(currentLog.Exception is not null ? $"{currentLog.Exception}\n" : "")}");
+                                Byte[] FileWrite = Encoding.UTF8.GetBytes($"[{currentLog.TimeOfEvent:dd.MM.yyyy HH:mm:ss:fff}] [{LogLevelText}] {LogMessage}\n{(currentLog.Exception is not null ? $"{currentLog.Exception}\n" : "")}");
                                 if (handler.OpenedFile != null)
                                 {
                                     await handler.OpenedFile.WriteAsync(FileWrite.AsMemory(0, FileWrite.Length));
