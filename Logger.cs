@@ -158,7 +158,7 @@ public class Logger : ILogger
                 }
                 catch (Exception ex)
                 {
-                    handler.LogError("An exception occured while trying to display a log message", ex);
+                    handler.LogError("An exception occurred while trying to display a log message", ex);
                     await Task.Delay(1000);
                     continue;
                 }
