@@ -181,13 +181,11 @@ public class Logger : ILogger
 
         Thread.Sleep(500);
 
-        if (RunningLogger is not null)
-            RunningLogger.Dispose();
+        RunningLogger?.Dispose();
 
         RunningLogger = null;
 
-        if (OpenedFile is not null)
-            OpenedFile.Close();
+        OpenedFile?.Close();
     }
 
 
