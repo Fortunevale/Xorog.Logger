@@ -171,7 +171,10 @@ public class Logger : ILogger
                             if (placeholderIndex == 0 && attemptedParsing)
                                 placeholderIndex = leftOver.Length;
 
-                            builder.Add(new StringPart { String = leftOver[..placeholderIndex] });
+                            var str = leftOver[..placeholderIndex];
+                            if (!string.IsNullOrEmpty(str))
+                                builder.Add(new StringPart { String = str });
+
                             leftOver = leftOver[placeholderIndex..];
                             attemptedParsing = false;
                         }
