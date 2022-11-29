@@ -104,7 +104,7 @@ public class Logger : ILogger
                             LogLevel.TRACE => ConsoleColor.Gray,
                             LogLevel.DEBUG2 => ConsoleColor.Gray,
                             LogLevel.DEBUG => ConsoleColor.Gray,
-                            LogLevel.INFO => ConsoleColor.Green,
+                            LogLevel.INFO => ConsoleColor.Cyan,
                             LogLevel.WARN => ConsoleColor.Yellow,
                             LogLevel.ERROR => ConsoleColor.Red,
                             LogLevel.FATAL => ConsoleColor.Black,
@@ -124,46 +124,56 @@ public class Logger : ILogger
 
                         int currentArg = 0;
                         bool inTemplate = false;
+                        bool attemptedParsing = false;
                         List<StringPart> builder = new();
                         
                         while (leftOver.Length > 0)
                         {
-                            if (inTemplate && currentLog.Args?.Length >= currentArg)
+                            if (inTemplate)
                             {
-                                int endIndex = leftOver.IndexOf('}');
+                                attemptedParsing = true;
+                                if (currentLog.Args?.Length >= currentArg)
+                                {
+                                    int endIndex = leftOver.IndexOf('}');
 
-                                object objectToAdd = currentLog.Args[currentArg];
-                                currentArg++;
+                                    object objectToAdd = currentLog.Args[currentArg];
+                                    currentArg++;
 
-                                if (objectToAdd.GetType() == typeof(int))
-                                    builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
-                                else if (objectToAdd.GetType() == typeof(long))
-                                    builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
-                                else if (objectToAdd.GetType() == typeof(uint))
-                                    builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
-                                else if (objectToAdd.GetType() == typeof(ulong))
-                                    builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
-                                else
-                                    builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.DarkGray });
+                                    if (objectToAdd.GetType() == typeof(int))
+                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
+                                    else if (objectToAdd.GetType() == typeof(long))
+                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
+                                    else if (objectToAdd.GetType() == typeof(uint))
+                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
+                                    else if (objectToAdd.GetType() == typeof(ulong))
+                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
+                                    else
+                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.DarkGray });
 
-                                inTemplate = false;
+                                    inTemplate = false;
 
-                                leftOver = leftOver[(endIndex + 1)..];
-                                continue;
+                                    leftOver = leftOver[(endIndex + 1)..];
+                                    attemptedParsing = false;
+                                    continue; 
+                                }
                             }
 
                             inTemplate = false;
 
                             int placeholderIndex = leftOver.IndexOf('{');
 
-                            if (placeholderIndex != -1 && currentLog.Args?.Length >= currentArg)
+                            if (placeholderIndex != -1)
                                 inTemplate = true;
 
-                            if (placeholderIndex is -1 or 0 || placeholderIndex > leftOver.Length)
+                            if (placeholderIndex == -1 || placeholderIndex > leftOver.Length)
+                                placeholderIndex = leftOver.Length;
+
+                            if (placeholderIndex == 0 && attemptedParsing)
                                 placeholderIndex = leftOver.Length;
 
                             builder.Add(new StringPart { String = leftOver[..placeholderIndex] });
                             leftOver = leftOver[placeholderIndex..];
+                            attemptedParsing = false;
                         }
 
                         if (handler.maxLogLevel >= currentLog.LogLevel)
