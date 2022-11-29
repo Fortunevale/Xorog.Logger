@@ -211,6 +211,7 @@ public class Logger : ILogger
                         {
                             builder[i1].Dispose();
                         }
+                        builder.Clear();
 
                         _ = Task.Run(() =>
                         {
