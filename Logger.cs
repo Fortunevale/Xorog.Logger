@@ -34,6 +34,8 @@ public class Logger : ILogger
     /// <returns>A bool stating if the logger was started</returns>
     public static Logger StartLogger(string filePath = "", LogLevel level = LogLevel.DEBUG, DateTime cleanUpBefore = new DateTime(), bool ThrowOnFailedDeletion = false)
     {
+        filePath = filePath.Replace("\\", "/");
+
         var handler = new Logger();
         handler._provider = new(handler);
 
@@ -42,6 +44,14 @@ public class Logger : ILogger
 
         if (filePath is not "")
         {
+            if (filePath.Contains('/'))
+            {
+                var dirPath = filePath[..filePath.LastIndexOf('/')];
+
+                if (!Directory.Exists(dirPath))
+                    Directory.CreateDirectory(dirPath);
+            }
+
             handler.FileName = filePath;
             handler.OpenedFile = File.Open(handler.FileName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
         }
