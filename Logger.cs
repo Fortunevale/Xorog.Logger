@@ -140,15 +140,15 @@ public class Logger : ILogger
                                     currentArg++;
 
                                     if (objectToAdd.GetType() == typeof(int))
-                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
+                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Magenta });
                                     else if (objectToAdd.GetType() == typeof(long))
-                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
+                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Magenta });
                                     else if (objectToAdd.GetType() == typeof(uint))
-                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
+                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Magenta });
                                     else if (objectToAdd.GetType() == typeof(ulong))
-                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
+                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Magenta });
                                     else
-                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.DarkGray });
+                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
 
                                     inTemplate = false;
 
