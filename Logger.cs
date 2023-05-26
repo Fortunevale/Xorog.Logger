@@ -149,6 +149,9 @@ public class Logger : ILogger
                                     object objectToAdd = currentLog.Args[currentArg];
                                     currentArg++;
 
+                                    if (objectToAdd is null)
+                                        continue;
+
                                     if (objectToAdd.GetType() == typeof(int))
                                         builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Magenta });
                                     else if (objectToAdd.GetType() == typeof(long))
