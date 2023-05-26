@@ -146,6 +146,9 @@ public class Logger : ILogger
                                 {
                                     int endIndex = leftOver.IndexOf('}');
 
+                                    if (currentArg > currentLog.Args.Length)
+                                        continue;
+
                                     object objectToAdd = currentLog.Args[currentArg];
                                     currentArg++;
 
