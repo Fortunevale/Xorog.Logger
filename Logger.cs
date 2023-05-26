@@ -144,32 +144,39 @@ public class Logger : ILogger
                                 attemptedParsing = true;
                                 if (currentLog.Args?.Length >= currentArg)
                                 {
-                                    int endIndex = leftOver.IndexOf('}');
+                                    try
+                                    {
+                                        int endIndex = leftOver.IndexOf('}');
 
-                                    if (currentArg > currentLog.Args.Length)
+                                        if (currentArg > currentLog.Args.Length)
+                                            continue;
+
+                                        object objectToAdd = currentLog.Args[currentArg];
+                                        currentArg++;
+
+                                        if (objectToAdd is null)
+                                            continue;
+
+                                        if (objectToAdd.GetType() == typeof(int))
+                                            builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Magenta });
+                                        else if (objectToAdd.GetType() == typeof(long))
+                                            builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Magenta });
+                                        else if (objectToAdd.GetType() == typeof(uint))
+                                            builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Magenta });
+                                        else if (objectToAdd.GetType() == typeof(ulong))
+                                            builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Magenta });
+                                        else
+                                            builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
+
+                                        inTemplate = false;
+
+                                        leftOver = leftOver[(endIndex + 1)..];
+                                        attemptedParsing = false;
+                                    }
+                                    catch (Exception)
+                                    {
                                         continue;
-
-                                    object objectToAdd = currentLog.Args[currentArg];
-                                    currentArg++;
-
-                                    if (objectToAdd is null)
-                                        continue;
-
-                                    if (objectToAdd.GetType() == typeof(int))
-                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Magenta });
-                                    else if (objectToAdd.GetType() == typeof(long))
-                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Magenta });
-                                    else if (objectToAdd.GetType() == typeof(uint))
-                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Magenta });
-                                    else if (objectToAdd.GetType() == typeof(ulong))
-                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Magenta });
-                                    else
-                                        builder.Add(new StringPart { String = objectToAdd.ToString(), Color = ConsoleColor.Cyan });
-
-                                    inTemplate = false;
-
-                                    leftOver = leftOver[(endIndex + 1)..];
-                                    attemptedParsing = false;
+                                    }
                                     continue; 
                                 }
                             }
