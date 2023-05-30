@@ -175,6 +175,7 @@ public class Logger : ILogger
                                     }
                                     catch (Exception)
                                     {
+                                        currentArg++;
                                         continue;
                                     }
                                     continue; 
