@@ -99,7 +99,7 @@ public class Logger : ILogger
                         handler.LogsToPost.Remove(currentLog);
 
 
-                        if (currentLog is null)
+                        if (currentLog is null || currentLog.Message is null)
                         {
                             continue;
                         }
