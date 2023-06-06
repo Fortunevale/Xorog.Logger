@@ -5,6 +5,3 @@ global using System.IO;
 global using System.Linq;
 global using System.Text;
 global using System.Threading.Tasks;
-global using Xorog.Logger.Entities;
-global using Xorog.Logger.Enums;
-global using LogLevel = Xorog.Logger.Enums.LogLevel;

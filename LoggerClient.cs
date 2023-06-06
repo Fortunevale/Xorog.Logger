@@ -1,24 +1,25 @@
 ﻿using Newtonsoft.Json;
+using Xorog.Logger.EventArgs;
 
 namespace Xorog.Logger;
 
 #pragma warning disable IDE1006 // Naming Styles
 
-public class Logger : ILogger
+public class LoggerClient : ILogger
 {
-    internal Logger() { }
+    internal LoggerClient() { }
 
     public LoggerProvider _provider { get; internal set; }
 
     private bool loggerStarted = false;
-    private LogLevel maxLogLevel = LogLevel.DEBUG;
+    private CustomLogLevel maxLogLevel = CustomLogLevel.Debug;
 
     private string FileName = "";
     private FileStream OpenedFile { get; set; }
 
     internal List<LogEntry> LogsToPost = new();
     internal List<string> Blacklist = new();
-    internal List<LogLevel> FileBlackList = new();
+    internal List<CustomLogLevel> FileBlackList = new();
 
     private Task RunningLogger = null;
 
@@ -32,11 +33,16 @@ public class Logger : ILogger
     /// <param name="level">The loglevel that should be displayed in the console, does not affect whats written to file</param>
     /// <param name="cleanUpBefore">Clean up old logs before a datetime</param>
     /// <returns>A bool stating if the logger was started</returns>
-    public static Logger StartLogger(string filePath = "", LogLevel level = LogLevel.DEBUG, DateTime cleanUpBefore = new DateTime(), bool ThrowOnFailedDeletion = false)
+    public static LoggerClient StartLogger(string filePath = "", CustomLogLevel level = CustomLogLevel.Debug, DateTime cleanUpBefore = new DateTime(), bool ThrowOnFailedDeletion = false)
     {
+        DirectoryInfo directoryInfo = new(new FileInfo(filePath).DirectoryName);
+
+        if (!directoryInfo.Exists)
+            directoryInfo.Create();
+
         filePath = filePath.Replace("\\", "/");
 
-        var handler = new Logger();
+        var handler = new LoggerClient();
         handler._provider = new(handler);
 
         if (handler.loggerStarted)
@@ -111,19 +117,19 @@ public class Logger : ILogger
 
                         LogLevelColor = currentLog.LogLevel switch
                         {
-                            LogLevel.TRACE => ConsoleColor.Gray,
-                            LogLevel.DEBUG2 => ConsoleColor.Gray,
-                            LogLevel.DEBUG => ConsoleColor.Gray,
-                            LogLevel.INFO => ConsoleColor.Cyan,
-                            LogLevel.WARN => ConsoleColor.Yellow,
-                            LogLevel.ERROR => ConsoleColor.Red,
-                            LogLevel.FATAL => ConsoleColor.Black,
+                            CustomLogLevel.Trace => ConsoleColor.Gray,
+                            CustomLogLevel.Debug2 => ConsoleColor.Gray,
+                            CustomLogLevel.Debug => ConsoleColor.Gray,
+                            CustomLogLevel.Info => ConsoleColor.Cyan,
+                            CustomLogLevel.Warn => ConsoleColor.Yellow,
+                            CustomLogLevel.Error => ConsoleColor.Red,
+                            CustomLogLevel.Fatal => ConsoleColor.Black,
                             _ => ConsoleColor.Gray
                         };
 
                         BackgroundColor = currentLog.LogLevel switch
                         {
-                            LogLevel.FATAL => ConsoleColor.DarkRed,
+                            CustomLogLevel.Fatal => ConsoleColor.DarkRed,
                             _ => ConsoleColor.Black
                         };
 
@@ -278,7 +284,7 @@ public class Logger : ILogger
     public void StopLogger()
     {
         loggerStarted = false;
-        maxLogLevel = LogLevel.DEBUG;
+        maxLogLevel = CustomLogLevel.Debug;
         FileName = "";
 
         Thread.Sleep(500);
@@ -306,7 +312,7 @@ public class Logger : ILogger
     /// Add blacklisted log level to not save
     /// </summary>
     /// <param name="levels">The log levels not to save to the log file</param>
-    public void AddLogLevelBlacklist(params LogLevel[] levels)
+    public void AddLogLevelBlacklist(params CustomLogLevel[] levels)
     {
         for (int i = 0; i < levels.Length; i++)
         {
@@ -318,7 +324,7 @@ public class Logger : ILogger
     /// Changes the log level
     /// </summary>
     /// <param name="level">The new log level to apply</param>
-    public void ChangeLogLevel(LogLevel level) => maxLogLevel = level;
+    public void ChangeLogLevel(CustomLogLevel level) => maxLogLevel = level;
 
     /// <summary>
     /// Log with none log level
@@ -329,7 +335,7 @@ public class Logger : ILogger
     public void LogNone(string message, Exception? exception = null, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.NONE,
+        LogLevel = CustomLogLevel.None,
         RawMessage = message,
         Args = args,
         Exception = exception
@@ -343,7 +349,7 @@ public class Logger : ILogger
     public void LogNone(string message, Exception? exception = null) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.NONE,
+        LogLevel = CustomLogLevel.None,
         RawMessage = message,
         Exception = exception
     });
@@ -356,7 +362,7 @@ public class Logger : ILogger
     public void LogNone(string message, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.NONE,
+        LogLevel = CustomLogLevel.None,
         RawMessage = message,
         Args = args
     });
@@ -370,7 +376,7 @@ public class Logger : ILogger
     public void LogTrace(string message, Exception? exception = null, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.TRACE,
+        LogLevel = CustomLogLevel.Trace,
         RawMessage = message,
         Args = args,
         Exception = exception
@@ -384,7 +390,7 @@ public class Logger : ILogger
     public void LogTrace(string message, Exception? exception = null) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.TRACE,
+        LogLevel = CustomLogLevel.Trace,
         RawMessage = message,
         Exception = exception
     });
@@ -397,7 +403,7 @@ public class Logger : ILogger
     public void LogTrace(string message, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.TRACE,
+        LogLevel = CustomLogLevel.Trace,
         RawMessage = message,
         Args = args,
     });
@@ -411,7 +417,7 @@ public class Logger : ILogger
     public void LogDebug2(string message, Exception? exception = null, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.DEBUG2,
+        LogLevel = CustomLogLevel.Debug2,
         RawMessage = message,
         Args = args,
         Exception = exception
@@ -425,7 +431,7 @@ public class Logger : ILogger
     public void LogDebug2(string message, Exception? exception = null) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.DEBUG2,
+        LogLevel = CustomLogLevel.Debug2,
         RawMessage = message,
         Exception = exception
     });
@@ -438,7 +444,7 @@ public class Logger : ILogger
     public void LogDebug2(string message, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.DEBUG2,
+        LogLevel = CustomLogLevel.Debug2,
         RawMessage = message,
         Args = args
     });
@@ -452,7 +458,7 @@ public class Logger : ILogger
     public void LogDebug(string message, Exception? exception = null, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.DEBUG,
+        LogLevel = CustomLogLevel.Debug,
         RawMessage = message,
         Args = args,
         Exception = exception
@@ -466,7 +472,7 @@ public class Logger : ILogger
     public void LogDebug(string message, Exception? exception = null) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.DEBUG,
+        LogLevel = CustomLogLevel.Debug,
         RawMessage = message,
         Exception = exception
     });
@@ -479,7 +485,7 @@ public class Logger : ILogger
     public void LogDebug(string message, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.DEBUG,
+        LogLevel = CustomLogLevel.Debug,
         RawMessage = message,
         Args = args
     });
@@ -493,7 +499,7 @@ public class Logger : ILogger
     public void LogInfo(string message, Exception? exception = null, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.INFO,
+        LogLevel = CustomLogLevel.Info,
         RawMessage = message,
         Args = args,
         Exception = exception
@@ -507,7 +513,7 @@ public class Logger : ILogger
     public void LogInfo(string message, Exception? exception = null) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.INFO,
+        LogLevel = CustomLogLevel.Info,
         RawMessage = message,
         Exception = exception
     });
@@ -520,7 +526,7 @@ public class Logger : ILogger
     public void LogInfo(string message, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.INFO,
+        LogLevel = CustomLogLevel.Info,
         RawMessage = message,
         Args = args
     });
@@ -534,7 +540,7 @@ public class Logger : ILogger
     public void LogWarn(string message, Exception? exception = null, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.WARN,
+        LogLevel = CustomLogLevel.Warn,
         RawMessage = message,
         Args = args,
         Exception = exception
@@ -548,7 +554,7 @@ public class Logger : ILogger
     public void LogWarn(string message, Exception? exception = null) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.WARN,
+        LogLevel = CustomLogLevel.Warn,
         RawMessage = message,
         Exception = exception
     });
@@ -561,7 +567,7 @@ public class Logger : ILogger
     public void LogWarn(string message, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.WARN,
+        LogLevel = CustomLogLevel.Warn,
         RawMessage = message,
         Args = args
     });
@@ -575,7 +581,7 @@ public class Logger : ILogger
     public void LogError(string message, Exception? exception = null, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.ERROR,
+        LogLevel = CustomLogLevel.Error,
         RawMessage = message,
         Args = args,
         Exception = exception
@@ -589,7 +595,7 @@ public class Logger : ILogger
     public void LogError(string message, Exception? exception = null) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.ERROR,
+        LogLevel = CustomLogLevel.Error,
         RawMessage = message,
         Exception = exception
     });
@@ -602,7 +608,7 @@ public class Logger : ILogger
     public void LogError(string message, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.ERROR,
+        LogLevel = CustomLogLevel.Error,
         RawMessage = message,
         Args = args
     });
@@ -616,7 +622,7 @@ public class Logger : ILogger
     public void LogFatal(string message, Exception? exception = null, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.FATAL,
+        LogLevel = CustomLogLevel.Fatal,
         RawMessage = message,
         Args = args,
         Exception = exception
@@ -630,7 +636,7 @@ public class Logger : ILogger
     public void LogFatal(string message, Exception? exception = null) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.FATAL,
+        LogLevel = CustomLogLevel.Fatal,
         RawMessage = message,
         Exception = exception
     });
@@ -643,7 +649,7 @@ public class Logger : ILogger
     public void LogFatal(string message, params object[] args) => LogsToPost.Add(new LogEntry
     {
         TimeOfEvent = DateTime.Now,
-        LogLevel = LogLevel.FATAL,
+        LogLevel = CustomLogLevel.Fatal,
         RawMessage = message,
         Args = args
     });
@@ -662,14 +668,14 @@ public class Logger : ILogger
         TimeOfEvent = DateTime.Now,
         LogLevel = logLevel switch
         {
-            Microsoft.Extensions.Logging.LogLevel.Debug => LogLevel.DEBUG2,
-            Microsoft.Extensions.Logging.LogLevel.Trace => LogLevel.TRACE2,
-            Microsoft.Extensions.Logging.LogLevel.Information => LogLevel.INFO,
-            Microsoft.Extensions.Logging.LogLevel.Warning => LogLevel.WARN,
-            Microsoft.Extensions.Logging.LogLevel.Error => LogLevel.ERROR,
-            Microsoft.Extensions.Logging.LogLevel.Critical => LogLevel.FATAL,
-            Microsoft.Extensions.Logging.LogLevel.None => LogLevel.NONE,
-            _ => LogLevel.NONE,
+            Microsoft.Extensions.Logging.LogLevel.Debug => CustomLogLevel.Debug2,
+            Microsoft.Extensions.Logging.LogLevel.Trace => CustomLogLevel.Trace2,
+            Microsoft.Extensions.Logging.LogLevel.Information => CustomLogLevel.Info,
+            Microsoft.Extensions.Logging.LogLevel.Warning => CustomLogLevel.Warn,
+            Microsoft.Extensions.Logging.LogLevel.Error => CustomLogLevel.Error,
+            Microsoft.Extensions.Logging.LogLevel.Critical => CustomLogLevel.Fatal,
+            Microsoft.Extensions.Logging.LogLevel.None => CustomLogLevel.None,
+            _ => CustomLogLevel.None,
         },
         RawMessage = $"[{eventId.Id}] {formatter(state, exception)}",
         Exception = exception

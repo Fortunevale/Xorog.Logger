@@ -1,4 +1,4 @@
-﻿namespace Xorog.Logger.Entities;
+﻿namespace Xorog.Logger;
 
 internal class StringPart : IDisposable
 {
