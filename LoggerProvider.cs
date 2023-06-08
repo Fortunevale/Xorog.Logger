@@ -1,6 +1,6 @@
 ﻿namespace Xorog.Logger;
 
-public class LoggerProvider : ILoggerProvider
+public sealed class LoggerProvider : ILoggerProvider
 {
     internal LoggerProvider(LoggerClient logger)
     {

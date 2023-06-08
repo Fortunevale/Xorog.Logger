@@ -3,16 +3,17 @@ using Xorog.Logger.EventArgs;
 
 namespace Xorog.Logger;
 
-#pragma warning disable IDE1006 // Naming Styles
-
-public class LoggerClient : ILogger
+public sealed class LoggerClient : ILogger
 {
     internal LoggerClient() { }
 
-    public LoggerProvider _provider { get; internal set; }
+    /// <summary>
+    /// The <see cref="ILoggerProvider"/>.
+    /// </summary>
+    public LoggerProvider Provider { get; internal set; }
 
-    private bool loggerStarted = false;
-    private CustomLogLevel maxLogLevel = CustomLogLevel.Debug;
+    private bool LoggerStarted = false;
+    private CustomLogLevel MaxLogLevel = CustomLogLevel.Debug;
 
     private string FileName = "";
     private FileStream OpenedFile { get; set; }
@@ -23,6 +24,9 @@ public class LoggerClient : ILogger
 
     private Task RunningLogger = null;
 
+    /// <summary>
+    /// Fired when a log message has been sent.
+    /// </summary>
     public event EventHandler<LogMessageEventArgs> LogRaised;
 
 
@@ -43,9 +47,9 @@ public class LoggerClient : ILogger
         filePath = filePath.Replace("\\", "/");
 
         var handler = new LoggerClient();
-        handler._provider = new(handler);
+        handler.Provider = new(handler);
 
-        if (handler.loggerStarted)
+        if (handler.LoggerStarted)
             throw new Exception($"The logger is already started");
 
         if (filePath is not "")
@@ -62,8 +66,8 @@ public class LoggerClient : ILogger
             handler.OpenedFile = File.Open(handler.FileName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
         }
 
-        handler.loggerStarted = true;
-        handler.maxLogLevel = level;
+        handler.LoggerStarted = true;
+        handler.MaxLogLevel = level;
 
         if (cleanUpBefore != new DateTime())
         {
@@ -90,7 +94,7 @@ public class LoggerClient : ILogger
 
         handler.RunningLogger = Task.Run(async () =>
         {
-            while (handler.loggerStarted)
+            while (handler.LoggerStarted)
             {
                 try
                 {
@@ -209,7 +213,7 @@ public class LoggerClient : ILogger
                             attemptedParsing = false;
                         }
 
-                        if (handler.maxLogLevel >= currentLog.LogLevel)
+                        if (handler.MaxLogLevel >= currentLog.LogLevel)
                         {
                             Console.ResetColor(); Console.Write($"[{currentLog.TimeOfEvent:dd.MM.yyyy HH:mm:ss:fff}] ");
                             Console.ForegroundColor = LogLevelColor; Console.BackgroundColor = BackgroundColor; Console.Write($"[{LogLevelText}]"); Console.ResetColor(); Console.Write(" ");
@@ -283,8 +287,8 @@ public class LoggerClient : ILogger
     /// </summary>
     public void StopLogger()
     {
-        loggerStarted = false;
-        maxLogLevel = CustomLogLevel.Debug;
+        LoggerStarted = false;
+        MaxLogLevel = CustomLogLevel.Debug;
         FileName = "";
 
         Thread.Sleep(500);
@@ -324,7 +328,7 @@ public class LoggerClient : ILogger
     /// Changes the log level
     /// </summary>
     /// <param name="level">The new log level to apply</param>
-    public void ChangeLogLevel(CustomLogLevel level) => maxLogLevel = level;
+    public void ChangeLogLevel(CustomLogLevel level) => MaxLogLevel = level;
 
     /// <summary>
     /// Log with none log level
@@ -682,7 +686,7 @@ public class LoggerClient : ILogger
     });
 
     public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) 
-        => loggerStarted;
+        => LoggerStarted;
 
     public IDisposable BeginScope<TState>(TState state)
         => default!;
