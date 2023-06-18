@@ -152,7 +152,7 @@ public sealed class LoggerClient : ILogger
                             if (inTemplate)
                             {
                                 attemptedParsing = true;
-                                if (currentLog.Args?.Length >= currentArg)
+                                if (currentLog.Args?.Length >= currentArg && currentLog.Args?.Length != 0)
                                 {
                                     try
                                     {
