@@ -308,7 +308,8 @@ public sealed class LoggerClient : ILogger
     {
         for (int i = 0; i < blacklist.Length; i++)
         {
-            Blacklist.Add(blacklist[i]);
+            if (!string.IsNullOrWhiteSpace(blacklist[i]))
+                Blacklist.Add(blacklist[i]);
         }
     }
 
