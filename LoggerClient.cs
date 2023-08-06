@@ -59,7 +59,7 @@ public sealed class LoggerClient : ILogger
                 var dirPath = filePath[..filePath.LastIndexOf('/')];
 
                 if (!Directory.Exists(dirPath))
-                    Directory.CreateDirectory(dirPath);
+                    _ = Directory.CreateDirectory(dirPath);
             }
 
             handler.FileName = filePath;
@@ -103,10 +103,10 @@ public sealed class LoggerClient : ILogger
                         Thread.Sleep(10);
                     }
 
-                    for (int i = 0; i < handler.LogsToPost.Count; i++)
+                    for (var i = 0; i < handler.LogsToPost.Count; i++)
                     {
                         var currentLog = handler.LogsToPost[0];
-                        handler.LogsToPost.Remove(currentLog);
+                        _ = handler.LogsToPost.Remove(currentLog);
 
 
                         if (currentLog is null || currentLog.RawMessage is null)
@@ -114,7 +114,7 @@ public sealed class LoggerClient : ILogger
                             continue;
                         }
 
-                        string LogLevelText = $"{currentLog.LogLevel,-6}";
+                        var LogLevelText = $"{currentLog.LogLevel,-6}";
 
                         ConsoleColor LogLevelColor;
                         ConsoleColor BackgroundColor;
@@ -137,14 +137,14 @@ public sealed class LoggerClient : ILogger
                             _ => ConsoleColor.Black
                         };
 
-                        string leftOver = currentLog.RawMessage;
+                        var leftOver = currentLog.RawMessage;
 
                         foreach (var blacklistobject in handler.Blacklist)
                             leftOver = leftOver.Replace(blacklistobject, new String('*', blacklistobject.Length), StringComparison.CurrentCultureIgnoreCase);
 
-                        int currentArg = 0;
-                        bool inTemplate = false;
-                        bool attemptedParsing = false;
+                        var currentArg = 0;
+                        var inTemplate = false;
+                        var attemptedParsing = false;
                         List<StringPart> builder = new();
                         
                         while (leftOver.Length > 0)
@@ -156,12 +156,12 @@ public sealed class LoggerClient : ILogger
                                 {
                                     try
                                     {
-                                        int endIndex = leftOver.IndexOf('}');
+                                        var endIndex = leftOver.IndexOf('}');
 
                                         if (currentArg > currentLog.Args.Length)
                                             continue;
 
-                                        object objectToAdd = currentLog.Args[currentArg];
+                                        var objectToAdd = currentLog.Args[currentArg];
                                         currentArg++;
 
                                         if (objectToAdd is null)
@@ -194,7 +194,7 @@ public sealed class LoggerClient : ILogger
 
                             inTemplate = false;
 
-                            int placeholderIndex = leftOver.IndexOf('{');
+                            var placeholderIndex = leftOver.IndexOf('{');
 
                             if (placeholderIndex != -1)
                                 inTemplate = true;
@@ -218,7 +218,7 @@ public sealed class LoggerClient : ILogger
                             Console.ResetColor(); Console.Write($"[{currentLog.TimeOfEvent:dd.MM.yyyy HH:mm:ss:fff}] ");
                             Console.ForegroundColor = LogLevelColor; Console.BackgroundColor = BackgroundColor; Console.Write($"[{LogLevelText}]"); Console.ResetColor(); Console.Write(" ");
 
-                            foreach (StringPart part in builder)
+                            foreach (var part in builder)
                             {
                                 Console.ForegroundColor = part.Color ?? ConsoleColor.White;
                                 Console.BackgroundColor = ConsoleColor.Black;
@@ -241,22 +241,19 @@ public sealed class LoggerClient : ILogger
 
                         currentLog.Message = string.Join("", builder.Select(x => x.String));
 
-                        for (int i1 = 0; i1 < builder.Count; i1++)
+                        for (var i1 = 0; i1 < builder.Count; i1++)
                         {
                             builder[i1].Dispose();
                         }
                         builder.Clear();
 
-                        _ = Task.Run(() =>
-                        {
-                            handler.LogRaised?.Invoke(null, new LogMessageEventArgs() { LogEntry = currentLog });
-                        });
+                        _ = Task.Run(() => handler.LogRaised?.Invoke(null, new LogMessageEventArgs() { LogEntry = currentLog }));
 
                         try
                         {
                             if (!handler.FileBlackList.Contains(currentLog.LogLevel))
                             {
-                                Byte[] FileWrite = Encoding.UTF8.GetBytes($"[{currentLog.TimeOfEvent:dd.MM.yyyy HH:mm:ss:fff}] [{LogLevelText}] {currentLog.Message}\n{(currentLog.Exception is not null ? $"{currentLog.Exception}\n" : "")}");
+                                var FileWrite = Encoding.UTF8.GetBytes($"[{currentLog.TimeOfEvent:dd.MM.yyyy HH:mm:ss:fff}] [{LogLevelText}] {currentLog.Message}\n{(currentLog.Exception is not null ? $"{currentLog.Exception}\n" : "")}");
                                 if (handler.OpenedFile != null)
                                 {
                                     await handler.OpenedFile.WriteAsync(FileWrite.AsMemory(0, FileWrite.Length));
@@ -297,7 +294,7 @@ public sealed class LoggerClient : ILogger
 
         RunningLogger = null;
 
-        OpenedFile?.Close();
+        this.OpenedFile?.Close();
     }
 
     /// <summary>
@@ -306,7 +303,7 @@ public sealed class LoggerClient : ILogger
     /// <param name="blacklist">The strings to censor</param>
     public void AddBlacklist(params string[] blacklist)
     {
-        for (int i = 0; i < blacklist.Length; i++)
+        for (var i = 0; i < blacklist.Length; i++)
         {
             if (!string.IsNullOrWhiteSpace(blacklist[i]))
                 Blacklist.Add(blacklist[i]);
@@ -319,7 +316,7 @@ public sealed class LoggerClient : ILogger
     /// <param name="levels">The log levels not to save to the log file</param>
     public void AddLogLevelBlacklist(params CustomLogLevel[] levels)
     {
-        for (int i = 0; i < levels.Length; i++)
+        for (var i = 0; i < levels.Length; i++)
         {
             FileBlackList.Add(levels[i]);
         }
