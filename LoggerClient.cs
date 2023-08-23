@@ -231,7 +231,12 @@ public sealed class LoggerClient : ILogger
                             if (currentLog.Exception is not null)
                                 try
                                 {
-                                    Console.WriteLine(JsonConvert.SerializeObject(currentLog.Exception, Formatting.Indented, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore }));
+                                    Console.WriteLine(JsonConvert.SerializeObject(currentLog.Exception, Formatting.Indented, new JsonSerializerSettings()
+                                    {
+                                        NullValueHandling = NullValueHandling.Ignore,
+                                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                                        Error = (serializer, err) => err.ErrorContext.Handled = true
+                                    }));
                                 }
                                 catch (Exception)
                                 {
